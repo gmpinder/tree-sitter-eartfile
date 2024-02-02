@@ -1,0 +1,29 @@
+{
+  "name": "tree-sitter-earthly",
+  "version": "1.0.0",
+  "description": "Tree-sitter for Earthly Earthfiles",
+  "main": "bindings/node",
+  "scripts": {
+    "test": "tree-sitter test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gmpinder/tree-sitter-earthly.git"
+  },
+  "keywords": [
+    "earthly",
+    "tree-sitter"
+  ],
+  "author": "Gerald Pinder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gmpinder/tree-sitter-earthly/issues"
+  },
+  "homepage": "https://github.com/gmpinder/tree-sitter-earthly#readme",
+  "dependencies": {
+    "nan": "^2.18.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.20.8"
+  }
+}
