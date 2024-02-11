@@ -33,7 +33,11 @@ module.exports = grammar({
       seq(
         alias(/[fF][rR][oO][mM]/, "FROM"),
         optional($.param),
-        choice($.image_spec, $.earthfile_local_path),
+        choice(
+          $.image_spec,
+          $.earthfile_ref,
+          $.target
+        ),
         optional(seq(alias(/[aA][sS]/, "AS"), field("as", $.image_alias)))
       ),
 
@@ -228,24 +232,24 @@ module.exports = grammar({
       ),
 
     image_spec: ($) =>
-      seq(
+      prec(1, seq(
         field("name", $.image_name),
         seq(
           field("tag", optional($.image_tag)),
           field("digest", optional($.image_digest))
         )
-      ),
+      )),
 
     image_name: ($) =>
       seq(
-        choice(/[^@:\s\$-]/, $.expansion),
-        repeat(choice(token.immediate(/[^@:\s\$]+/), $._immediate_expansion))
+        choice(/[^@:\+\s\$-]/, $.expansion),
+        repeat(choice(token.immediate(/[^@:\+\s\$]+/), $._immediate_expansion))
       ),
 
     image_tag: ($) =>
       seq(
         token.immediate(":"),
-        repeat1(choice(token.immediate(/[^@\s\$]+/), $._immediate_expansion))
+        repeat1(choice(token.immediate(/[^@\+\s\$]+/), $._immediate_expansion))
       ),
 
     image_digest: ($) =>
@@ -416,8 +420,6 @@ module.exports = grammar({
 
     comment: ($) => /#.*/,
 
-    _target_name: ($) => /[a-z-]/,
-
     version_instruction: ($) => seq(
       alias(/[vV][eE][rR][sS][iI][oO][nN]/, "VERSION"),
       optional($.param),
@@ -436,44 +438,69 @@ module.exports = grammar({
     import_instruction: ($) => seq(
       alias(/[iI][mM][pP][oO][rR][tT]/, "IMPORT"),
       optional($.param),
-      field("earthfile_ref", choice($.image_spec, $.earthfile_local_path)),
+      choice($.image_name, $.earthfile_local_path),
       optional(seq(alias(/[aA][sS]/, "AS"), field("as", $.image_alias))),
     ),
 
-    target: ($) => seq(
-      token.immediate("+"),
-      /[a-z0-9-]+/,
-    ),
+    target: ($) => 
+      seq(
+        "+",
+        /[a-z0-9-]+/,
+      ),
 
-    target_header: ($) => seq(
-      field("target", /[a-z0-9-]+/),
-      ":\n",
-    ),
+    target_direct: ($) =>
+      seq(
+        token.immediate("+"),
+        /[a-z0-9-]+/,
+      ),
 
-    function_target: ($) => seq(
-      token.immediate("+"),
-      /[A-Z0-9_]+/,
-    ),
+    target_header: ($) => 
+      seq(
+        field("target", /[a-z0-9-]+/),
+        ":\n",
+      ),
 
-    function_header: ($) => seq(
-      field("function",/[A-Z0-9_]+/),
-      ":\n",
-    ),
+    function_target: ($) => 
+      seq(
+        "+",
+        /[A-Z0-9_]+/,
+      ),
+
+    function_target_direct: ($) => 
+      seq(
+        token.immediate("+"),
+        /[A-Z0-9_]+/,
+      ),
+
+    function_header: ($) => 
+      seq(
+        field("function",/[A-Z0-9_]+/),
+        ":\n",
+      ),
 
     earthfile_local_path: ($) =>
       seq(
-        choice("./", "../"),
+        choice("./", repeat1("../")),
         choice(
-          /[^-\s\$]/, // cannot start with a '-' to avoid conflicts with params
+          /[^-\+\s\$]/, // cannot start with a '-' to avoid conflicts with params
           $.expansion
         ),
-        repeat(choice(token.immediate(/[^\s\$]+/), $._immediate_expansion))
+        repeat(choice(token.immediate(/[^\+\s\$]+/), $._immediate_expansion))
       ),
+
+    earthfile_ref: ($) =>
+      prec(0, seq(
+        choice(
+          $.earthfile_local_path,
+          $.image_name
+        ),
+        optional($.target_direct)
+      )),
 
     build_instruction: ($) => seq(
       alias(/[bB][uU][iI][lL][dD]/, "BUILD"),
       optional($.param),
-      choice($.image_spec, $.earthfile_local_path),
+      choice($.image_spec, $.earthfile_ref),
       optional($.param),
     )
   },
