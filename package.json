@@ -5,7 +5,8 @@
   "main": "bindings/node",
   "scripts": {
     "build": "tree-sitter generate",
-    "test": "tree-sitter test"
+    "test": "tree-sitter test",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "nan": "^2.18.0"
   },
   "devDependencies": {
+    "husky": "^9.0.10",
     "tree-sitter-cli": "^0.20.8"
   }
 }
