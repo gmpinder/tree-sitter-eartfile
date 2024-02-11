@@ -44,6 +44,11 @@
     }
   },
   {
+    "type": "build_arg",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "build_instruction",
     "named": true,
     "fields": {},
@@ -52,15 +57,19 @@
       "required": true,
       "types": [
         {
+          "type": "build_arg",
+          "named": true
+        },
+        {
           "type": "earthfile_ref",
           "named": true
         },
         {
-          "type": "image_spec",
+          "type": "param",
           "named": true
         },
         {
-          "type": "param",
+          "type": "target",
           "named": true
         }
       ]
@@ -293,6 +302,10 @@
       "required": true,
       "types": [
         {
+          "type": "build_arg",
+          "named": true
+        },
+        {
           "type": "earthfile_ref",
           "named": true
         },
@@ -310,11 +323,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "function_header",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "healthcheck_instruction",
@@ -732,10 +740,6 @@
           "named": true
         },
         {
-          "type": "function_header",
-          "named": true
-        },
-        {
           "type": "healthcheck_instruction",
           "named": true
         },
@@ -753,10 +757,6 @@
         },
         {
           "type": "run_instruction",
-          "named": true
-        },
-        {
-          "type": "target_header",
           "named": true
         },
         {
@@ -785,11 +785,6 @@
   },
   {
     "type": "target_direct",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "target_header",
     "named": true,
     "fields": {}
   },

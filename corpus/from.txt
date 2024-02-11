@@ -7,9 +7,9 @@ FROM testimage
 ---
 
 (source_file
-	(from_instruction
-		(image_spec
-			name: (image_name))))
+    (from_instruction
+        (image_spec
+            name: (image_name))))
 
 ==================
 Image with tag
@@ -20,10 +20,10 @@ FROM testimage:tag
 ---
 
 (source_file
-	(from_instruction
-		(image_spec
-			name: (image_name)
-		    tag: (image_tag))))
+    (from_instruction
+        (image_spec
+            name: (image_name)
+            tag: (image_tag))))
 
 ==================
 Image with digest
@@ -34,10 +34,10 @@ FROM testimage@sha256:skgshlshg
 ---
 
 (source_file
-	(from_instruction
-		(image_spec
-			name: (image_name)
-		    digest: (image_digest))))
+    (from_instruction
+        (image_spec
+            name: (image_name)
+            digest: (image_digest))))
 
 ==================
 Image with tag and digest
@@ -48,11 +48,11 @@ FROM testimage:tag@sha256:452525
 ---
 
 (source_file
-	(from_instruction
-		(image_spec
-			name: (image_name)
-		    tag: (image_tag)
-		    digest: (image_digest))))
+    (from_instruction
+        (image_spec
+            name: (image_name)
+            tag: (image_tag)
+            digest: (image_digest))))
 
 
 ==================
@@ -64,12 +64,12 @@ FROM sourcegraph/alpine:3.12@sha256:ce099fbcd3cf70b338fc4cb2a4e1fa9ae847de21afdb
 ---
 
 (source_file
-	(from_instruction
-		(image_spec
-			name: (image_name)
-		    tag: (image_tag)
-		    digest: (image_digest))
-		as: (image_alias)))
+    (from_instruction
+        (image_spec
+            name: (image_name)
+            tag: (image_tag)
+            digest: (image_digest))
+        as: (image_alias)))
 
 ==================
 From with param
@@ -87,6 +87,23 @@ FROM --platform=linux/arm64 alpine-${VERSION}-z
         (expansion
           (variable))))))
 
+==================
+From with multiple param
+==================
+
+FROM --platform=linux/arm64 --platform=linux/amd64 alpine-${VERSION}-z
+
+---
+
+(source_file
+  (from_instruction
+    (param)
+    (param)
+    (image_spec
+      (image_name
+        (expansion
+          (variable))))))
+
 ======================================================
 From current dir Earthfile
 ======================================================
@@ -98,7 +115,36 @@ FROM ./test
 (source_file
   (from_instruction
     (earthfile_ref
-	    (earthfile_local_path))))
+        (earthfile_local_path))))
+
+==================
+From current dir Earthfile with build arg
+==================
+
+FROM ./test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)))
+
+==================
+From current dir Earthfile with multiple build arg
+==================
+
+FROM ./test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)
+    (build_arg)))
 
 ======================================================
 From single previous dir Earthfile
@@ -111,7 +157,36 @@ FROM ../test
 (source_file
   (from_instruction
     (earthfile_ref
-	    (earthfile_local_path))))
+        (earthfile_local_path))))
+
+==================
+From single previous dir Earthfile with build arg
+==================
+
+FROM ../test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)))
+
+==================
+From single previous dir Earthfile with multiple build arg
+==================
+
+FROM ../test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)
+    (build_arg)))
 
 ======================================================
 From multi previous dir Earthfile
@@ -124,7 +199,36 @@ FROM ../../test
 (source_file
   (from_instruction
     (earthfile_ref
-	    (earthfile_local_path))))
+        (earthfile_local_path))))
+
+==================
+From multi previous dir Earthfile with build arg
+==================
+
+FROM ../../test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)))
+
+==================
+From multi previous dir Earthfile with multiple build arg
+==================
+
+FROM ../../test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path))
+    (build_arg)
+    (build_arg)))
 
 ======================================================
 From current dir Earthfile target
@@ -137,8 +241,39 @@ FROM ./test+test
 (source_file
   (from_instruction
     (earthfile_ref
-	  (earthfile_local_path)
-		  (target_direct))))
+      (earthfile_local_path)
+          (target_direct))))
+
+==================
+From current dir Earthfile target with build arg
+==================
+
+FROM ./test+test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path)
+        (target_direct))
+    (build_arg)))
+
+==================
+From current dir Earthfile target with multiple build arg
+==================
+
+FROM ./test+test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+        (earthfile_local_path)
+        (target_direct))
+    (build_arg)
+    (build_arg)))
 
 ======================================================
 From single previous dir Earthfile target
@@ -151,8 +286,8 @@ FROM ../test+test
 (source_file
   (from_instruction
     (earthfile_ref
-	  (earthfile_local_path)
-	  (target_direct))))
+      (earthfile_local_path)
+      (target_direct))))
 
 ======================================================
 From remote Earthfile target
@@ -165,8 +300,39 @@ FROM github.com/test/earthly+test
 (source_file
   (from_instruction
     (earthfile_ref
-	  (image_name)
-	  (target_direct))))
+      (image_name)
+      (target_direct))))
+
+==================
+From remote Earthfile with build arg
+==================
+
+FROM github.com/test/earthly+test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+      (image_name)
+      (target_direct))
+    (build_arg)))
+
+==================
+From remote Earthfile with multiple build arg
+==================
+
+FROM github.com/test/earthly+test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (earthfile_ref
+      (image_name)
+      (target_direct))
+    (build_arg)
+    (build_arg)))
 
 ======================================================
 From local Earthfile target
@@ -180,6 +346,33 @@ FROM +test
   (from_instruction
     (target)))
 
+==================
+From local Earthfile target with build arg
+==================
+
+FROM +test --TEST_ARG="test"
+
+---
+
+(source_file
+  (from_instruction
+    (target)
+    (build_arg)))
+
+==================
+From local Earthfile target with multiple build arg
+==================
+
+FROM +test --TEST_ARG="test" --TEST_ARGS="test2"
+
+---
+
+(source_file
+  (from_instruction
+    (target)
+    (build_arg)
+    (build_arg)))
+
 ======================================================
 No spaces in remote Earthfile target
 ======================================================
@@ -190,9 +383,9 @@ FROM github.com/test/earthly +test
 
 (source_file
   (from_instruction
-	(ERROR
-	  (image_name))
-	  (target)))
+    (ERROR
+      (image_name))
+      (target)))
 
 ======================================================
 No spaces in current dir Earthfile target
@@ -204,9 +397,9 @@ FROM ./test +test
 
 (source_file
   (from_instruction
-	(ERROR
-	  (earthfile_local_path))
-	  (target)))
+    (ERROR
+      (earthfile_local_path))
+      (target)))
 
 ======================================================
 No spaces in previous dir Earthfile target
@@ -218,9 +411,9 @@ FROM ../test +test
 
 (source_file
   (from_instruction
-	(ERROR
-	  (earthfile_local_path))
-	  (target)))
+    (ERROR
+      (earthfile_local_path))
+      (target)))
 
 ======================================================
 No spaces in multi previous dir Earthfile target
@@ -232,9 +425,9 @@ FROM ../../test +test
 
 (source_file
   (from_instruction
-	(ERROR
-	  (earthfile_local_path))
-	  (target)))
+    (ERROR
+      (earthfile_local_path))
+      (target)))
 
 ======================================================
 No spaces in image name
@@ -248,7 +441,7 @@ FROM a b c
   (ERROR
     (from_instruction
       (image_spec
-	(image_name)))))
+    (image_name)))))
 
 ======================================================
 No spaces in image name before expansion
@@ -263,8 +456,8 @@ FROM a $b
     (ERROR)
     (image_spec
       (image_name
-	(expansion
-	  (variable))))))
+    (expansion
+      (variable))))))
 
 ======================================================
 No spaces in image name expansion
@@ -291,8 +484,8 @@ FROM a: $B
       (image_name))
     (image_spec
       (image_name
-	(expansion
-	  (variable))))))
+    (expansion
+      (variable))))))
 
 ======================================================
 No spaces in image digest
@@ -309,8 +502,8 @@ FROM a:b@ $c
       (image_tag))
     (image_spec
       (image_name
-	(expansion
-	  (variable))))))
+    (expansion
+      (variable))))))
 
 ======================================================
 No spaces in image alias
@@ -324,7 +517,7 @@ FROM a AS b c
   (ERROR
     (from_instruction
       (image_spec
-	(image_name))
+    (image_name))
       (image_alias))))
 
 ======================================================
@@ -342,4 +535,4 @@ FROM a AS b $C
     (ERROR)
     (image_alias
       (expansion
-	(variable)))))
+    (variable)))))

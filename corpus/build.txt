@@ -1,0 +1,191 @@
+==================
+Build with param
+==================
+
+BUILD --platform=linux/arm64 github.com/test/test
+
+---
+
+(source_file
+  (build_instruction
+    (param)
+	(earthfile_ref
+		(image_name))))
+
+==================
+Build with multi param
+==================
+
+BUILD --platform=linux/arm64 --platform=linux/amd64 github.com/test/test
+
+---
+
+(source_file
+  (build_instruction
+    (param)
+	(param)
+	(earthfile_ref
+		(image_name))))
+
+==================
+Build with build arg
+==================
+
+BUILD github.com/test/test --TEST_ARG="test"
+
+---
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+      (image_name))
+    (build_arg)))
+
+======================================================
+Build current dir Earthfile
+======================================================
+
+BUILD ./test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	    (earthfile_local_path))))
+
+======================================================
+Build single previous dir Earthfile
+======================================================
+
+BUILD ../test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	    (earthfile_local_path))))
+
+======================================================
+Build multi previous dir Earthfile
+======================================================
+
+BUILD ../../test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	    (earthfile_local_path))))
+
+======================================================
+Build current dir Earthfile target
+======================================================
+
+BUILD ./test+test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	  (earthfile_local_path)
+		  (target_direct))))
+
+======================================================
+Build single previous dir Earthfile target
+======================================================
+
+BUILD ../test+test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	  (earthfile_local_path)
+	  (target_direct))))
+
+======================================================
+Build remote Earthfile target
+======================================================
+
+BUILD github.com/test/earthly+test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (earthfile_ref
+	  (image_name)
+	  (target_direct))))
+
+======================================================
+Build local Earthfile target
+======================================================
+
+BUILD +test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+    (target)))
+
+======================================================
+No spaces in remote Earthfile target
+======================================================
+
+BUILD github.com/test/earthly +test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+	(ERROR
+	  (image_name))
+	  (target)))
+
+======================================================
+No spaces in current dir Earthfile target
+======================================================
+
+BUILD ./test +test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+	(ERROR
+	  (earthfile_local_path))
+	  (target)))
+
+======================================================
+No spaces in previous dir Earthfile target
+======================================================
+
+BUILD ../test +test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+	(ERROR
+	  (earthfile_local_path))
+	  (target)))
+
+======================================================
+No spaces in multi previous dir Earthfile target
+======================================================
+
+BUILD ../../test +test
+
+------------------------------------------------------
+
+(source_file
+  (build_instruction
+	(ERROR
+	  (earthfile_local_path))
+	  (target)))

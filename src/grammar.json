@@ -43,6 +43,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "build_instruction"
+        },
+        {
+          "type": "SYMBOL",
           "name": "from_instruction"
         },
         {
@@ -92,18 +96,6 @@
         {
           "type": "SYMBOL",
           "name": "healthcheck_instruction"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "target_header"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "function_header"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "build_instruction"
         }
       ]
     },
@@ -120,16 +112,11 @@
           "value": "FROM"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "param"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "param"
+          }
         },
         {
           "type": "CHOICE",
@@ -139,12 +126,36 @@
               "name": "image_spec"
             },
             {
-              "type": "SYMBOL",
-              "name": "earthfile_ref"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "earthfile_ref"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "build_arg"
+                  }
+                }
+              ]
             },
             {
-              "type": "SYMBOL",
-              "name": "target"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "target"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "build_arg"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1211,6 +1222,57 @@
         }
       ]
     },
+    "build_arg": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "--"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "IMMEDIATE_TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "[a-zA-Z][-a-zA-Z_]*"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "IMMEDIATE_TOKEN",
+                  "content": {
+                    "type": "STRING",
+                    "value": "="
+                  }
+                },
+                {
+                  "type": "FIELD",
+                  "name": "value",
+                  "content": {
+                    "type": "IMMEDIATE_TOKEN",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[^\\s]+"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "mount_param": {
       "type": "SEQ",
       "members": [
@@ -2007,41 +2069,31 @@
           "value": "BUILD"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "param"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "param"
+          }
         },
         {
           "type": "CHOICE",
           "members": [
-            {
-              "type": "SYMBOL",
-              "name": "image_spec"
-            },
             {
               "type": "SYMBOL",
               "name": "earthfile_ref"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "target"
             }
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "param"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "build_arg"
+          }
         }
       ]
     }

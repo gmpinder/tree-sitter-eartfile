@@ -11,6 +11,7 @@ module.exports = grammar({
         $.version_instruction,
         $.project_instruction,
         $.import_instruction,
+        $.build_instruction,
         $.from_instruction,
         $.run_instruction,
         $.cmd_instruction,
@@ -24,19 +25,16 @@ module.exports = grammar({
         $.workdir_instruction,
         $.arg_instruction,
         $.healthcheck_instruction,
-        $.target_header,
-        $.function_header,
-        $.build_instruction,
       ),
 
     from_instruction: ($) =>
       seq(
         alias(/[fF][rR][oO][mM]/, "FROM"),
-        optional($.param),
+        repeat($.param),
         choice(
           $.image_spec,
-          $.earthfile_ref,
-          $.target
+          seq($.earthfile_ref, repeat($.build_arg)),
+          seq($.target, repeat($.build_arg))
         ),
         optional(seq(alias(/[aA][sS]/, "AS"), field("as", $.image_alias)))
       ),
@@ -263,6 +261,16 @@ module.exports = grammar({
       seq(
         "--",
         field("name", token.immediate(/[a-z][-a-z]*/)),
+        optional(seq(
+          token.immediate("="),
+          field("value", token.immediate(/[^\s]+/))
+        ))
+      ),
+
+    build_arg: ($) =>
+      seq(
+        "--",
+        field("name", token.immediate(/[a-zA-Z][-a-zA-Z_]*/)),
         optional(seq(
           token.immediate("="),
           field("value", token.immediate(/[^\s]+/))
@@ -502,9 +510,9 @@ module.exports = grammar({
 
     build_instruction: ($) => seq(
       alias(/[bB][uU][iI][lL][dD]/, "BUILD"),
-      optional($.param),
-      choice($.image_spec, $.earthfile_ref),
-      optional($.param),
+      repeat($.param),
+      choice($.earthfile_ref, $.target),
+      repeat($.build_arg),
     )
   },
 });
