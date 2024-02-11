@@ -438,7 +438,10 @@ module.exports = grammar({
     import_instruction: ($) => seq(
       alias(/[iI][mM][pP][oO][rR][tT]/, "IMPORT"),
       optional($.param),
-      choice($.image_name, $.earthfile_local_path),
+      choice(
+        $.earthfile_local_path,
+        $.image_name
+      ),
       optional(seq(alias(/[aA][sS]/, "AS"), field("as", $.image_alias))),
     ),
 

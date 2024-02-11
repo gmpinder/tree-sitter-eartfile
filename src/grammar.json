@@ -1775,11 +1775,11 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "image_name"
+              "name": "earthfile_local_path"
             },
             {
               "type": "SYMBOL",
-              "name": "earthfile_local_path"
+              "name": "image_name"
             }
           ]
         },
